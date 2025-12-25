@@ -6,6 +6,7 @@ services:
     devices:
       - /dev/kvm:/dev/kvm
     volumes:
+      - ./start-kvm.sh:/usr/local/bin/start-kvm.sh
       - ./win10.qcow2:/var/lib/libvirt/images/win10.qcow2
     environment:
       LIBVIRT_DEFAULT_URI: qemu:///system
@@ -16,6 +17,24 @@ services:
       - "5901:5901"
       - "2222:2222"
     tty: true
+    networks:
+      - virtualink
+
+  novnc:
+    container_name: win10-novnc
+    image: registry.seadee.com.cn:5000/win10-novnc:latest
+    build: ./novnc
+    environment:
+      DEFAULT_VNC_URL: vnc://kvm:5901
+      AUTO_CONNECT: true
+      HIDE_CONNECT_PANEL: true
+      ALLOW_ALL_VNC_TARGETS: "true"
+      VNC_TARGET_ALLOWLIST: kvm,localhost,127.0.0.1
+      VNC_CONNECT_TIMEOUT_SECONDS: 5
+    ports:
+      - "8080:8000"
+    depends_on:
+      - kvm
     networks:
       - virtualink
 
