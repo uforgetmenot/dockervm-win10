@@ -1,0 +1,24 @@
+services:
+  kvm:
+    container_name: win10-kvm
+    image: registry.seadee.com.cn:5000/win10-kvm:latest
+    build: .
+    devices:
+      - /dev/kvm:/dev/kvm
+    volumes:
+      - ./win10.qcow2:/var/lib/libvirt/images/win10.qcow2
+    environment:
+      LIBVIRT_DEFAULT_URI: qemu:///system
+      SPICE_PORT: 5900
+    ports:
+      - "5900:5900"
+      - "13389:3389"
+      - "5901:5901"
+      - "2222:2222"
+    tty: true
+    networks:
+      - virtualink
+
+networks:
+  virtualink:
+    external: true
